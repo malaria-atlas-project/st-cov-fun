@@ -35,14 +35,13 @@
 ! if -sd >= 1./(-sf*(1-tlc)+tlc):
 !     return np.zeros((nx,ny),order='F')
 
-      SUBROUTINE gtf(D,x,y,ddx,ddy,st,tlc,sf,nx,ny,
-     *cmin,cmax,symm,origin_val)
+      SUBROUTINE gtf(D,origin_val,x,y,ddx,ddy,st,tlc,sf,nx,ny,
+     *cmin,cmax,symm)
 
-cf2py intent(inplace) D
+cf2py intent(inplace) D, origin_val
 cf2py integer intent(optional) :: cmin=0
 cf2py integer intent(optional) :: cmax=-1
 cf2py logical intent(optional) :: symm=0
-cf2py intent(out) origin_val
 cf2py intent(hide) nx, ny
 cf2py threadsafe
 

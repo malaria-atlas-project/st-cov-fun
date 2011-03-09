@@ -64,6 +64,7 @@ def nonstationary_spatiotemporal(x,y,amp,scale,diff_degree,t_gam_fun=gtf,h=defau
     
     D = np.asmatrix(np.empty((nx,ny),order='F'))
     GT = np.asmatrix(np.empty((nx,ny),order='F'))
+    origin_val = np.asmatrix(np.empty((nx,ny),order='F'))
     
     # Figure out symmetry and threading
     if symm is None:
@@ -86,8 +87,8 @@ def nonstationary_spatiotemporal(x,y,amp,scale,diff_degree,t_gam_fun=gtf,h=defau
         imul(D,1./scale,cmin=cmin,cmax=cmax,symm=symm)            
         # Temporal variogram
         ddx, ddy = diff_degree(x), diff_degree(y)
-        origin_val = t_gam_fun(GT, x[:,-1], y[:,-1], ddx, ddy, cmin=cmin,cmax=cmax,symm=False,**kwds)
-        if np.any(GT<0):
+        t_gam_fun(GT, origin_val, x[:,-1], y[:,-1], ddx, ddy, cmin=cmin,cmax=cmax,symm=False,**kwds)
+        if np.any(GT[:,cmin:cmax]<0):
             raise pm.ZeroProbability, 'GT < 0.'
         # GT = np.add.outer(ddx*.5,ddy*.5)
         # Local properties
