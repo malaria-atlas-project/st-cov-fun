@@ -64,7 +64,7 @@ def my_st(x,y,amp,scale,inc,ecc,symm=None,**kwds):
         return np.zeros((nx,ny),order='F')
     
     D = np.asmatrix(np.empty((nx,ny),order='F'))
-    GT = np.asmatrix(np.empty((nx,ny),order='F'))
+    GT = np.asmatrix(np.zeros((nx,ny),order='F'))
     
     # Figure out symmetry and threading
     if symm is None:
@@ -84,11 +84,12 @@ def my_st(x,y,amp,scale,inc,ecc,symm=None,**kwds):
         imul(D,1./scale,cmin=cmin,cmax=cmax,symm=symm)            
         # Temporal variogram
         origin_val = t_gam_fun(GT, x[:,-1], y[:,-1],cmin=cmin,cmax=cmax,symm=symm,**kwds)
-        # Covariance
-        stein_spatiotemporal(D,GT,origin_val,cmin=cmin,cmax=cmax,symm=symm)                        
-        imul(D,amp*amp,cmin=cmin,cmax=cmax,symm=symm)            
-        # if symm:
-        #     symmetrize(D, cmin=cmin, cmax=cmax)
+        if np.any(GT<=-1):
+            D *= 0
+        else:
+            # Covariance
+            stein_spatiotemporal(D,GT,origin_val,cmin=cmin,cmax=cmax,symm=symm)                        
+            imul(D,amp*amp,cmin=cmin,cmax=cmax,symm=symm)            
     
     # Serial version
     if n_threads <= 1:
@@ -101,6 +102,8 @@ def my_st(x,y,amp,scale,inc,ecc,symm=None,**kwds):
 
     if symm:
         symmetrize(D)
+
+    
     
     return D
 
